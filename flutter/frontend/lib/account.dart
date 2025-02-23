@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'main.dart';
 class AccountPage extends StatelessWidget {
   final String username;
   const AccountPage({Key? key, required this.username}) : super(key: key);
@@ -19,7 +19,7 @@ class AccountPage extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.account_circle, size: 40),
               title: Text(
-                username, // Replace with actual account name
+                username, 
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,

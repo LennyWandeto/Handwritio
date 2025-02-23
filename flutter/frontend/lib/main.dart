@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
-
+import 'account.dart';
 // Data Model
 class ExtractedData {
   final List<File> images;
@@ -504,7 +504,8 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 }
 
-// Account Page
+// Account Page  
+/*
 class AccountPage extends StatelessWidget {
   final String username;
   const AccountPage({required this.username, Key? key}) : super(key: key);
@@ -531,3 +532,4 @@ class AccountPage extends StatelessWidget {
     );
   }
 }
+*/
