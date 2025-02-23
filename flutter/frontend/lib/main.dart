@@ -112,7 +112,7 @@ class _AnimatedWelcomePageState extends State<AnimatedWelcomePage>
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('background.jpeg'),
+            image: AssetImage('assets/background.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -245,7 +245,7 @@ class _TabBarDemoState extends State<TabBarDemo> {
         body: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/background.jpeg'),
+              image: AssetImage('assets/background.jpg'),
               fit: BoxFit.cover,
             ),
           ),
@@ -293,7 +293,7 @@ class _MainMenuState extends State<MainMenu> {
       request.files.add(await http.MultipartFile.fromPath(
         'images',
         image.path,
-        contentType: MediaType.parse(lookupMimeType(image.path) ?? 'image/jpeg'),
+        contentType: MediaType.parse(lookupMimeType(image.path) ?? 'image/jpg'),
       ));
     }
 
@@ -504,32 +504,3 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 }
 
-// Account Page  
-/*
-class AccountPage extends StatelessWidget {
-  final String username;
-  const AccountPage({required this.username, Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('Logged in as: $username',
-              style: const TextStyle(fontSize: 24, color: Colors.white)),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue[700],
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Log Out'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-*/

@@ -16,10 +16,16 @@ dependencies:
   mime: ^2.0.0
 
 dev_dependencies:
+  flutter_launcher_icons : "^0.9.2"
   flutter_test:
     sdk: flutter
 
 flutter:
   uses-material-design: true
   assets:
-    - assets/background.jpeg  # For background.jpeg
+    - assets/background.jpg  # For background.jpeg
+
+flutter_icons:
+  android: "assets/AND_Icon_Handwritio.ai"
+  ios: "assets/IOS_Icon_Handwritio.ai"
+  web: "assets/IOS_Icon_Handwritio.ai"
