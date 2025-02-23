@@ -1,3 +1,5 @@
+/*
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:handwritio/detail_screen.dart';
@@ -90,3 +92,4 @@ class ExtractedDataCard extends StatelessWidget {
   
 }
 
+*/

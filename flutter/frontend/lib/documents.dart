@@ -1,3 +1,5 @@
+/*
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:handwritio/take_photo.dart';
@@ -59,3 +61,4 @@ class ExtractedDataCard extends StatelessWidget {
     );
   }
 }
+*/

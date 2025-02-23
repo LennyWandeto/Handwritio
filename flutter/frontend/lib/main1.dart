@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import 'package:handwritio/take_photo.dart';
 import 'package:image_picker/image_picker.dart';
@@ -245,3 +246,4 @@ class TabBarDemo extends StatelessWidget {
     );
   }
 }
+*/
