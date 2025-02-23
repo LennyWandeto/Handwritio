@@ -22,7 +22,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - background.jpeg  # For background.jpeg
-  fonts:
-    - family: Roboto
-  
+    - assets/background.jpeg  # For background.jpeg
