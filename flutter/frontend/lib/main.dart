@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -13,13 +12,12 @@ class ExtractedData {
   final String text;
   ExtractedData({required this.images, required this.text});
 }
- 
+
 // Main App
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -208,10 +206,26 @@ class _AnimatedWelcomePageState extends State<AnimatedWelcomePage>
   }
 }
 
-// Main Tab Navigation
-class TabBarDemo extends StatelessWidget {
+// Convert TabBarDemo to a StatefulWidget so that it can manage saved documents.
+class TabBarDemo extends StatefulWidget {
   final String username;
   const TabBarDemo({super.key, required this.username});
+
+  @override
+  State<TabBarDemo> createState() => _TabBarDemoState();
+}
+
+class _TabBarDemoState extends State<TabBarDemo> {
+  // This list now holds all saved documents.
+  final List<ExtractedData> _savedDocuments = [];
+
+  // Callback to add a document.
+  void _handleDocumentSaved(ExtractedData doc) {
+    setState(() {
+      _savedDocuments.add(doc);
+    });
+    // Optionally, you could also switch to the second tab automatically.
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -223,7 +237,7 @@ class TabBarDemo extends StatelessWidget {
           bottom: const TabBar(
             tabs: [
               Tab(icon: Icon(Icons.camera)),
-              Tab(icon: Icon(Icons.folder)),
+              Tab(icon: Icon(Icons.photo_library)),
               Tab(icon: Icon(Icons.account_circle)),
             ],
           ),
@@ -237,9 +251,11 @@ class TabBarDemo extends StatelessWidget {
           ),
           child: TabBarView(
             children: [
-              MainMenu(),
-              const Center(child: Icon(Icons.photo_library, size: 100)),
-              AccountPage(username: username),
+              // Pass the onDocumentSaved callback to MainMenu.
+              MainMenu(onDocumentSaved: _handleDocumentSaved),
+              // Second tab now shows the detail screen (if a document exists).
+              SavedDetailScreen(savedDocuments: _savedDocuments),
+              AccountPage(username: widget.username),
             ],
           ),
         ),
@@ -250,6 +266,9 @@ class TabBarDemo extends StatelessWidget {
 
 // Main Camera Interface
 class MainMenu extends StatefulWidget {
+  final Function(ExtractedData) onDocumentSaved;
+  const MainMenu({Key? key, required this.onDocumentSaved}) : super(key: key);
+
   @override
   _MainMenuState createState() => _MainMenuState();
 }
@@ -259,7 +278,6 @@ class _MainMenuState extends State<MainMenu> {
   final ImagePicker _picker = ImagePicker();
   final String _serverUrl = "http://127.0.0.1:5000/upload";
   String _extractedText = "";
-  List<ExtractedData> _savedDocuments = [];
 
   Future<void> _pickImage() async {
     final XFile? pickedFile = await _picker.pickImage(source: ImageSource.camera);
@@ -289,23 +307,19 @@ class _MainMenuState extends State<MainMenu> {
     }
   }
 
+  // Instead of navigating to the detail view directly, we now use the callback.
   void _saveDocument() {
     if (_images.isNotEmpty && _extractedText.isNotEmpty) {
       final newDoc = ExtractedData(
         images: List<File>.from(_images),
         text: _extractedText,
       );
+      widget.onDocumentSaved(newDoc);
       setState(() {
-        _savedDocuments.add(newDoc);
         _images.clear();
         _extractedText = "";
       });
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => DetailScreen(data: newDoc),
-        ),
-      );
+      // Optionally, show a snackbar or prompt the user to check the second tab.
     }
   }
 
@@ -379,6 +393,23 @@ class _MainMenuState extends State<MainMenu> {
   }
 }
 
+// A widget for the second tab that shows the detail screen of the latest saved document.
+class SavedDetailScreen extends StatelessWidget {
+  final List<ExtractedData> savedDocuments;
+  const SavedDetailScreen({required this.savedDocuments, Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    if (savedDocuments.isEmpty) {
+      return const Center(
+        child: Text("No saved documents.", style: TextStyle(fontSize: 18)),
+      );
+    }
+    final latestDoc = savedDocuments.last;
+    return DetailScreen(data: latestDoc);
+  }
+}
+
 // Detail Screen
 class DetailScreen extends StatefulWidget {
   final ExtractedData data;
@@ -417,33 +448,38 @@ class _DetailScreenState extends State<DetailScreen> {
       body: Column(
         children: [
           Expanded(
-            child: Stack(
-              alignment: Alignment.bottomCenter,
-              children: [
-                PageView.builder(
-                  controller: _pageController,
-                  itemCount: widget.data.images.length,
-                  onPageChanged: (int page) => setState(() => _currentPage = page),
-                  itemBuilder: (context, index) => Image.file(
-                    widget.data.images[index],
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                if (widget.data.images.length > 1)
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 20),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.black54,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      '${_currentPage + 1}/${widget.data.images.length}',
-                      style: const TextStyle(color: Colors.white, fontSize: 16),
-                    ),
+            child: widget.data.images.isNotEmpty
+                ? Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      PageView.builder(
+                        controller: _pageController,
+                        itemCount: widget.data.images.length,
+                        onPageChanged: (int page) =>
+                            setState(() => _currentPage = page),
+                        itemBuilder: (context, index) => Image.file(
+                          widget.data.images[index],
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      if (widget.data.images.length > 1)
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 20),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.black54,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            '${_currentPage + 1}/${widget.data.images.length}',
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 16),
+                          ),
+                        )
+                    ],
                   )
-              ],
-            ),
+                : const Center(child: Text("No images available")),
           ),
           Container(
             padding: const EdgeInsets.all(20),
@@ -479,8 +515,8 @@ class AccountPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Logged in as: $username', 
-            style: const TextStyle(fontSize: 24, color: Colors.white)),
+          Text('Logged in as: $username',
+              style: const TextStyle(fontSize: 24, color: Colors.white)),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {},
